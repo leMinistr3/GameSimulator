@@ -1,10 +1,12 @@
 
 src/.vs/GameSimulator/FileContentIndex/
 
-src/GameSimulator/obj/Debug/net6.0/
-
 src/ObjectLibrary/obj/
 
 src/GameSimulator/obj/
 
 src/.vs/GameSimulator/v17/
+
+src/.vs/ProjectEvaluation/
+
+src/.vs/GameSimulator/DesignTimeBuild/

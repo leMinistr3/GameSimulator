@@ -15,6 +15,7 @@ namespace ObjectLibrary.Items
 
         public int number { get; private set; }
         public bool isRed { get; private set; }
+        public bool isHidden { get; set; }
         public Suit suit { get; private set; }
         public CardFace face { get; private set; }
         public int order { get; set; }

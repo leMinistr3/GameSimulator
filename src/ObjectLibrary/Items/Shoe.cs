@@ -32,7 +32,7 @@ namespace ObjectLibrary.Items
                 nextCard.isDiscard = true;
                 return nextCard;
             }
-
+            isShoeEmpty = true;
             return null;
         }
 
@@ -42,8 +42,10 @@ namespace ObjectLibrary.Items
             var numberOfCard = deckPenetration * 52;
             var discarded = cards.OrderByDescending(m => m.order).Take((int)numberOfCard).ToList();
             discarded.ForEach(m => m.isDiscard = true);
+            isShoeEmpty = false;
         }
 
+        public bool isShoeEmpty { get; set; }
         public List<Card> cards { get; set; }
     }
 }

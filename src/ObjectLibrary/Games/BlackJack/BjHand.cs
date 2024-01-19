@@ -16,10 +16,16 @@ namespace ObjectLibrary.Games.BlackJack
             cards = new List<Card>();
         }
 
-        public BjHand(Card card1)
+        public BjHand(Card card, bool isDealer = false)
         {
-            cards = new List<Card>();
-            cards.Add(card1);
+            if (isDealer)
+            {
+                card.isHidden = true;
+            }
+            cards = new List<Card>
+            {
+                card
+            };
         }
         public void AddCard(Card card)
         {
@@ -34,7 +40,7 @@ namespace ObjectLibrary.Games.BlackJack
         public HandResult GetHandTotal()
         {
             HandResult result = new HandResult();
-            int total = cards.Sum(m => m.number);
+            int total = cards.Where(m => !m.isHidden).Sum(m => m.number);
             result.Value = total;
 
             if (total < 11 && cards.Any(m => m.number == 1))
