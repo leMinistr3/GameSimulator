@@ -1,37 +1,30 @@
 ﻿using ObjectLibrary.Items;
+using System.Linq;
 
 namespace GameSimulator
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine();
 
-            Deck deck = new Deck();
+            Shoe shoe = new Shoe(6, 1.5);
 
+            for(int i = 0; i < 5; i++)
+            {
+                var card = shoe.DrawCard();
+                if(card != null)
+                {
+                    Console.WriteLine(card.ToString());
+                }
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
 
-            
-
-            Console.WriteLine("FIRST");
-            deck.cards.ForEach(card => { Console.WriteLine($"{card.number} {card.suit}"); });
-            deck.cards.Shuffle();
-
-            Console.WriteLine("New Shuffle");
-
-            deck.cards.ForEach(card => { Console.WriteLine($"{card.number} {card.suit}"); });
-            deck.cards.Shuffle();
-
-
-            Console.WriteLine("New Shuffle");
-
-            deck.cards.ForEach(card => { Console.WriteLine($"{card.number} {card.suit}"); });
-            deck.cards.Shuffle();
-
-
-            Console.WriteLine("New Shuffle");
-
-            deck.cards.ForEach(card => { Console.WriteLine($"{card.number} {card.suit}"); });
+            shoe.ReShuffle(0.45);
+            shoe.cards.ForEach(card => { Console.WriteLine(card.ToString()); });
 
             Console.ReadLine();
         }

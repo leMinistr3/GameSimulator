@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ObjectLibrary.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,16 +11,18 @@ namespace System.Linq
     {
         private static Random r = new Random();
 
-        public static IList<T> Shuffle<T>(this IList<T> items)
-        {
-            for (int i = 0; i < items.Count - 1; i++)
+        public static void Shuffle(this List<Card> items)
+        {        
+            for (int i = 0; i < items.Count; i++)
             {
                 int pos = r.Next(i, items.Count);
-                T temp = items[i];
+                Card temp = items[i];
                 items[i] = items[pos];
                 items[pos] = temp;
+
+                items[i].order = i + 1;
+                items[i].isDiscard = false;
             }
-            return items;
         }
     }
 }

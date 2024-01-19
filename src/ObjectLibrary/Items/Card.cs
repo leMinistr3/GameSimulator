@@ -20,9 +20,52 @@ namespace ObjectLibrary.Items
         public int order { get; set; }
         public bool isDiscard { get; set; }
 
+        public override string ToString()
+        {
+            string result = (number > 9) ? number.ToString() : number.ToString() + " ";
+
+            switch (face)
+            {
+                case CardFace.None:
+                    result += "      ";
+                    break;
+                case CardFace.Jack:
+                    result += " " + face + " ";
+                    break;
+                case CardFace.Queen:
+                    result += " " + face;
+                    break;
+                case CardFace.King:
+                    result += " " + face + " ";
+                    break;
+            }
+
+            switch (suit)
+            {
+                case Suit.Heart:
+                    result += " " + suit + "  ";
+                    break;
+                case Suit.Club:
+                    result += " " + suit + "   ";
+                    break;
+                case Suit.Diamond:
+                    result += " " + suit;
+                    break;
+                case Suit.Spade:
+                    result += " " + suit + "  ";
+                    break;
+            }
+
+            result += " " + order;
+
+            result += " " + ((isDiscard) ? "*" : "");
+
+            return result;
+        }
+
         private CardFace GetCardFace()
         {
-            if(this.number == 11)
+            if (this.number == 11)
             {
                 return CardFace.Jack;
             }
