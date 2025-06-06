@@ -11,7 +11,7 @@ namespace GameSimulator
 
             Shoe shoe = new Shoe(6, 1.5);
 
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < shoe.cards.Count; i++)
             {
                 var card = shoe.DrawCard();
                 if(card != null)

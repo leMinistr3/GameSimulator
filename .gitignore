@@ -10,3 +10,5 @@ src/.vs/GameSimulator/v17/
 src/.vs/ProjectEvaluation/
 
 src/.vs/GameSimulator/DesignTimeBuild/
+
+src/GameSimulator/bin/Debug/net6.0/

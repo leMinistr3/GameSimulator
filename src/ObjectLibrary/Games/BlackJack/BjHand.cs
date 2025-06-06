@@ -3,51 +3,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ObjectLibrary.Interface;
 using ObjectLibrary.Items;
 
 namespace ObjectLibrary.Games.BlackJack
 {
     public class BjHand
     {
-        private List<Card> cards { get; set; }
+        private List<Card> _cards { get; set; }
+        private BjPlayer? _player { get; set; }
+        public bool _isDealer { get; set; }
 
-        public BjHand() 
+        public BjHand(bool isDealer = false)
         {
-            cards = new List<Card>();
+            _isDealer = isDealer;
+            _cards = new List<Card>();
         }
 
         public BjHand(Card card, bool isDealer = false)
         {
-            if (isDealer)
+            _isDealer = isDealer;
+            if (_isDealer)
             {
                 card.isHidden = true;
             }
-            cards = new List<Card>
+            _cards = new List<Card>
             {
                 card
             };
         }
         public void AddCard(Card card)
         {
-            cards.Add(card);
+            _cards.Add(card);
         }
 
         public void ClearHand()
         {
-            cards.Clear();
+            _cards.Clear();
         }
 
         public HandResult GetHandTotal()
         {
             HandResult result = new HandResult();
-            int total = cards.Where(m => !m.isHidden).Sum(m => m.number);
+            int total = _cards.Where(m => !m.isHidden).Sum(m => m.number);
             result.Value = total;
 
-            if (total < 11 && cards.Any(m => m.number == 1))
+            if (_cards.Any(m => m.number == 1) && (result.Value + 10) <= 21)
             {
                 result.isSoft = true;
-                result.Value = total + 10;
+                result.Value += 10;
             }
+
             return result;
         }
     }

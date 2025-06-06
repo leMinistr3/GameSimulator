@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ObjectLibrary.Games.BlackJack
+﻿namespace ObjectLibrary.Games.BlackJack
 {
     public static class BjRule
     {
 
-        // Matrix Website : https://www.blackjackapprenticeship.com/wp-content/uploads/2018/08/BJA_Basic_Strategy.jpg
+        // Matrix Website : https://www.blackjackapprenticeship.com/wp-con.tent/uploads/2018/08/BJA_Basic_Strategy.jpg
 
 
         public static char[,] splitMatrix =

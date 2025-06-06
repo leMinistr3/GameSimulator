@@ -8,8 +8,15 @@ namespace ObjectLibrary.Items
 {
     public class Shoe
     {
+        public bool isShoeEmpty { get; set; }
+        public bool isLasthand { get; set; }
+        public int shoeDividerPosition { get; private set; }
+        public List<Card> cards { get; set; }
+        private double _deckPenetration { get; set; }
+
         public Shoe(int numberOfDeck, double deckPenetration)
         {
+            _deckPenetration = deckPenetration;
             cards = new List<Card>();
             for (int i = 0; i < numberOfDeck; i++)
             {
@@ -17,10 +24,7 @@ namespace ObjectLibrary.Items
             }
             cards.Shuffle();
 
-            var numberOfCard = deckPenetration * 52;
-
-            var discarded = cards.OrderByDescending(m => m.order).Take((int)numberOfCard).ToList();
-            discarded.ForEach(m => m.isDiscard = true);
+            shoeDividerPosition = (int)(cards.Count * _deckPenetration);
         }
 
         public Card? DrawCard()
@@ -29,6 +33,7 @@ namespace ObjectLibrary.Items
             if (remainingCards.Any())
             {
                 var nextCard = remainingCards.OrderBy(m => m.order).First();
+                isLasthand = (nextCard.order >= shoeDividerPosition);
                 nextCard.isDiscard = true;
                 return nextCard;
             }
@@ -36,16 +41,12 @@ namespace ObjectLibrary.Items
             return null;
         }
 
-        public void ReShuffle(double deckPenetration)
+        public void ReShuffle()
         {
             cards.Shuffle();
-            var numberOfCard = deckPenetration * 52;
-            var discarded = cards.OrderByDescending(m => m.order).Take((int)numberOfCard).ToList();
-            discarded.ForEach(m => m.isDiscard = true);
+            shoeDividerPosition = (int)(cards.Count * _deckPenetration);
             isShoeEmpty = false;
+            isLasthand = false;
         }
-
-        public bool isShoeEmpty { get; set; }
-        public List<Card> cards { get; set; }
     }
 }

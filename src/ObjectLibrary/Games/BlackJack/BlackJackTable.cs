@@ -11,35 +11,45 @@ namespace ObjectLibrary.Games.BlackJack
 {
     public class BlackJackTable
     {
-        public BlackJackTable(int playerCount, int numberOfDeck, double deckPenetration, double playerBankroll)
-        {
-            this.shoe = new Shoe(numberOfDeck, deckPenetration);
-            this.deckPenetration = deckPenetration;
+        private double deckPenetration { get; set; }
+        private Shoe _shoe { get; set; }
+        private BjHand _dealerHand { get { return _hands.Find(m => m.)} }
+        private BjPlayer _player { get; set; }
+        private List<BjHand> _hands { get; set; }
+        private const int _maxTableHands = 8;
+        private int _emptyTableHandCount { get { return _maxTableHands - _hands.Count; } }
 
-            players = new List<BjPlayer>();
+        public BlackJackTable(Shoe shoe, int playerCount, int advantagePlayerPosition, double advantagePlayerBankRool, int advantagePlayerHandCount = 1)
+        {
+            playerCount = (playerCount > _maxTableHands) ? _maxTableHands : playerCount;
+            advantagePlayerHandCount = _emptyTableHandCount < (advantagePlayerHandCount - 1) ? _emptyTableHandCount : advantagePlayerHandCount;
+
+            _shoe = shoe;
+
+            _players = new List<BjPlayer>();
 
             for (int i = 0; i < playerCount; i++)
             {
-                BjPlayer player = new BjPlayer(i + 1, playerBankroll);
-                players.Add(player);
+                BjPlayer player = (i == (advantagePlayerPosition - 1)) ? new BjPlayer(i + 1, advantagePlayerBankRool) : new BjPlayer(i + 1);
+                _players.Add(player);
             }
 
-            dealer = new BjDealer(playerCount);
+            _dealer = new BjDealer(playerCount);
         }
 
         public void RunSimulation()
         {
             List<IBjPlayer> tablePlayers = new List<IBjPlayer>();
-            tablePlayers.AddRange(players);
-            tablePlayers.Add(dealer);
+            tablePlayers.AddRange(_players);
+            tablePlayers.Add(_dealer);
             tablePlayers = tablePlayers.OrderBy(m => m.order).ToList();
 
-            while (!shoe.isShoeEmpty)
+            while (!_shoe.isShoeEmpty && !_shoe.isLasthand)
             {
                 // First Card
                 foreach (IBjPlayer player in tablePlayers)
                 {
-                    if (AddNewCard(player) == false)
+                    if (!AddNewCard(player))
                     {
                         break;
                     }
@@ -47,13 +57,13 @@ namespace ObjectLibrary.Games.BlackJack
                 //Secound Card
                 foreach (IBjPlayer player in tablePlayers)
                 {
-                    if (AddNewCard(player) == false)
+                    if (!AddNewCard(player))
                     {
                         break;
                     }
                 }
 
-                foreach(BjPlayer bjPlayer in players)
+                foreach (IBjPlayer bjPlayer in tablePlayers)
                 {
                     if (ResolveHand(bjPlayer) == false)
                     {
@@ -61,15 +71,16 @@ namespace ObjectLibrary.Games.BlackJack
                     }
                 }
             }
+            ResetTable();
         }
 
-        private bool ResolveHand(BjPlayer bjPlayer)
+        private bool ResolveHand(IBjPlayer bjPlayer)
         {
-            HandResult? dealerHand = dealer.HandTotal();
+            HandResult? dealerHand = _dealer.HandTotal();
 
             HandResult? playerHand = bjPlayer.HandTotal();
 
-            if(dealerHand != null && playerHand != null)
+            if (dealerHand != null && playerHand != null)
             {
 
             }
@@ -79,31 +90,20 @@ namespace ObjectLibrary.Games.BlackJack
 
         private void ResetTable()
         {
-            players.ForEach(m => m.ClearHand());
-            dealer.ClearHand();
+            _hands.ForEach(m => m.ClearHand());
 
-            shoe.ReShuffle(deckPenetration);
+            _shoe.ReShuffle();
         }
 
-        private bool AddNewCard(IBjPlayer player)
+        private bool AddNewCard(BjHand hand)
         {
-            var card = shoe.DrawCard();
+            var card = _shoe.DrawCard();
             if (card != null)
             {
-                player.AddCard(card);
+                hand.AddCard(card);
                 return true;
             }
-            else
-            {
-                ResetTable();
-                return false;
-            }
+            return false;
         }
-
-        private double deckPenetration { get; set; }
-        private Shoe shoe { get; set; }
-        private BjDealer dealer { get; set; }
-        private List<BjPlayer> players { get; set; }
-
     }
 }

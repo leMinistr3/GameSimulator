@@ -1,15 +1,10 @@
 ﻿using ObjectLibrary.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ObjectLibrary.Items
 {
     public class Deck
     {
-        private static Random r = new Random();
+        private static Random r = new();
         public Deck()
         {
             cards = new List<Card>();
