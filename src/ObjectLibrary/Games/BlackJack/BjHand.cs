@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ObjectLibrary.Enum;
 using ObjectLibrary.Interface;
 using ObjectLibrary.Items;
 
@@ -13,36 +14,39 @@ namespace ObjectLibrary.Games.BlackJack
         private List<Card> _cards { get; set; }
         private BjPlayer? _player { get; set; }
         public bool _isDealer { get; set; }
+        public bool _isAdvantagePlayer { get { return _player !=  null; } } 
+        public bool _isPositionEmpty { get; set; }
 
-        public BjHand(bool isDealer = false)
+        public BjHand(int position, PlayerHandType type)
         {
-            _isDealer = isDealer;
+            _isDealer = false;
+            _isPositionEmpty = type == PlayerHandType.Empty;
             _cards = new List<Card>();
         }
 
-        public BjHand(Card card, bool isDealer = false)
+        public BjHand(int position)
         {
-            _isDealer = isDealer;
-            if (_isDealer)
-            {
-                card.isHidden = true;
-            }
-            _cards = new List<Card>
-            {
-                card
-            };
+            _isDealer = true;
+            _cards = new List<Card>();
         }
+
+        public BjHand(BjPlayer player, int position)
+        {
+            _player = player;
+            _cards = new List<Card>();
+        }
+
         public void AddCard(Card card)
         {
             _cards.Add(card);
         }
 
-        public void ClearHand()
+        public void Clear()
         {
             _cards.Clear();
         }
 
-        public HandResult GetHandTotal()
+        public HandResult Value()
         {
             HandResult result = new HandResult();
             int total = _cards.Where(m => !m.isHidden).Sum(m => m.number);

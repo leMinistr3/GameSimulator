@@ -11,6 +11,11 @@ namespace ObjectLibrary.Games.BlackJack
 {
     public class BjPlayer
     {
-        private double bankroll { get; set; }
+        private double _bankroll { get; set; }
+
+        public BjPlayer(double bankroll)
+        {
+            _bankroll = bankroll;
+        }
     }
 }

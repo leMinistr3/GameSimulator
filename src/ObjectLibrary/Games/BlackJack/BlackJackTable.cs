@@ -13,59 +13,70 @@ namespace ObjectLibrary.Games.BlackJack
     {
         private double deckPenetration { get; set; }
         private Shoe _shoe { get; set; }
-        private BjHand _dealerHand { get { return _hands.Find(m => m.)} }
+        private BjHand _dealerHand { get { return _hands.First(m => m._isDealer); } }
         private BjPlayer _player { get; set; }
         private List<BjHand> _hands { get; set; }
         private const int _maxTableHands = 8;
         private int _emptyTableHandCount { get { return _maxTableHands - _hands.Count; } }
 
-        public BlackJackTable(Shoe shoe, int playerCount, int advantagePlayerPosition, double advantagePlayerBankRool, int advantagePlayerHandCount = 1)
+        public BlackJackTable(Shoe shoe, double apBankRool, List<PlayerHandType> handsPosition)
         {
-            playerCount = (playerCount > _maxTableHands) ? _maxTableHands : playerCount;
-            advantagePlayerHandCount = _emptyTableHandCount < (advantagePlayerHandCount - 1) ? _emptyTableHandCount : advantagePlayerHandCount;
+            if(handsPosition.Count + 1 > _maxTableHands)
+            {
+                throw new IndexOutOfRangeException("There's more player hands than table position");
+            }
+
+            _player = new BjPlayer(apBankRool);
 
             _shoe = shoe;
 
-            _players = new List<BjPlayer>();
+            _hands = new List<BjHand>();
 
-            for (int i = 0; i < playerCount; i++)
+            for (int i = 0; i < handsPosition.Count; i++)
             {
-                BjPlayer player = (i == (advantagePlayerPosition - 1)) ? new BjPlayer(i + 1, advantagePlayerBankRool) : new BjPlayer(i + 1);
-                _players.Add(player);
+                switch (handsPosition[i])
+                {
+                    case PlayerHandType.Empty:
+                        _hands.Add(new BjHand(i + 1, handsPosition[i]));
+                        break;
+                    case PlayerHandType.Player:
+                        _hands.Add(new BjHand(i + 1, handsPosition[i]));
+                        break;
+                    case PlayerHandType.AdvantagePlayer:
+                        _hands.Add(new BjHand(_player, i + 1));
+                        break;
+                        
+                }
             }
-
-            _dealer = new BjDealer(playerCount);
+            // Add Dealer hand as last position
+            _hands.Add(new BjHand(_maxTableHands + 1));
         }
 
         public void RunSimulation()
         {
-            List<IBjPlayer> tablePlayers = new List<IBjPlayer>();
-            tablePlayers.AddRange(_players);
-            tablePlayers.Add(_dealer);
-            tablePlayers = tablePlayers.OrderBy(m => m.order).ToList();
 
             while (!_shoe.isShoeEmpty && !_shoe.isLasthand)
             {
                 // First Card
-                foreach (IBjPlayer player in tablePlayers)
+                foreach (BjHand hand in _hands)
                 {
-                    if (!AddNewCard(player))
+                    if (!AddNewCard(hand))
                     {
                         break;
                     }
                 }
                 //Secound Card
-                foreach (IBjPlayer player in tablePlayers)
+                foreach (BjHand hand in _hands)
                 {
-                    if (!AddNewCard(player))
+                    if (!AddNewCard(hand))
                     {
                         break;
                     }
                 }
 
-                foreach (IBjPlayer bjPlayer in tablePlayers)
+                foreach (BjHand hand in _hands)
                 {
-                    if (ResolveHand(bjPlayer) == false)
+                    if (ResolveHand(hand) == false)
                     {
                         break;
                     }
@@ -74,11 +85,11 @@ namespace ObjectLibrary.Games.BlackJack
             ResetTable();
         }
 
-        private bool ResolveHand(IBjPlayer bjPlayer)
+        private bool ResolveHand(BjHand hand)
         {
-            HandResult? dealerHand = _dealer.HandTotal();
+            HandResult? dealerHand = _dealerHand.Value();
 
-            HandResult? playerHand = bjPlayer.HandTotal();
+            HandResult? playerHand = hand.Value();
 
             if (dealerHand != null && playerHand != null)
             {
@@ -90,7 +101,7 @@ namespace ObjectLibrary.Games.BlackJack
 
         private void ResetTable()
         {
-            _hands.ForEach(m => m.ClearHand());
+            _hands.ForEach(m => m.Clear());
 
             _shoe.ReShuffle();
         }
