@@ -1,26 +1,20 @@
-﻿using ObjectLibrary.Enum;
-using ObjectLibrary.Games.BlackJack.Interface;
+﻿using ObjectLibrary.Games.BlackJack.Interface;
 using ObjectLibrary.Games.BlackJack.Model;
 using ObjectLibrary.Items;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ObjectLibrary.Games.BlackJack
 {
-    public class BjHand: IBjHand
+    public class BjDealer : IBjHand
     {
         private List<Card> _cards { get; set; }
-        private BjPlayer? _player { get; set; }
-        public bool isAdvantagePlayer { get { return _player !=  null; } } 
-        public bool isDisable { get; set; }
 
-        public BjHand(int position, PlayerHandType type)
+        public BjDealer()
         {
-            isDisable = type == PlayerHandType.Empty;
-            _cards = new List<Card>();
-        }
-
-        public BjHand(BjPlayer player, int position)
-        {
-            _player = player;
             _cards = new List<Card>();
         }
 
@@ -28,6 +22,7 @@ namespace ObjectLibrary.Games.BlackJack
         {
             if (card != null)
             {
+                card.isHidden = _cards.Count == 1;
                 _cards.Add(card);
                 return true;
             }
