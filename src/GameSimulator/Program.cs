@@ -23,7 +23,7 @@ namespace GameSimulator
             Console.WriteLine();
             Console.WriteLine();
 
-            shoe.ReShuffle(0.45);
+            shoe.ReShuffle();
             shoe.cards.ForEach(card => { Console.WriteLine(card.ToString()); });
 
             Console.ReadLine();

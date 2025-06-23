@@ -1,11 +1,5 @@
 ﻿using ObjectLibrary.Games.BlackJack.Interface;
-using ObjectLibrary.Games.BlackJack.Model;
 using ObjectLibrary.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ObjectLibrary.Games.BlackJack
 {
@@ -32,21 +26,6 @@ namespace ObjectLibrary.Games.BlackJack
         public void Clear()
         {
             _cards.Clear();
-        }
-
-        public BjHandResult Value()
-        {
-            BjHandResult result = new BjHandResult();
-            int total = _cards.Where(m => !m.isHidden).Sum(m => m.number);
-            result.Value = total;
-
-            if (_cards.Any(m => m.number == 1) && (result.Value + 10) <= 21)
-            {
-                result.isSoft = true;
-                result.Value += 10;
-            }
-
-            return result;
         }
     }
 }

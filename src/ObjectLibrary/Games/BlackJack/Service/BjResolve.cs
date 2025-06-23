@@ -1,50 +1,61 @@
 ﻿using ObjectLibrary.Enum;
 using ObjectLibrary.Games.BlackJack.Config;
-using ObjectLibrary.Games.BlackJack.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ObjectLibrary.Games.BlackJack.Helper;
+using ObjectLibrary.Items;
 
 namespace ObjectLibrary.Games.BlackJack.Service
 {
     public static class BjResolve
     {
-        private static bool CanDouble(BjHandResult handResult) => handResult.CardNumber == 2 || BjRule.DoubleMoreThan2Card;
+        private static bool CanDouble(List<Card> hands) => hands.Count == 2 || BjRule.DoubleMoreThan2Card;
 
-        public static BjAction PlayerAction(BjHandResult playerHand, BjHandResult dealerhand)
+        public static BjAction PlayerAction(List<Card> playerHand, List<Card> dealerHand)
         {
-            if (playerHand.Value == 21)
+            int total = playerHand.BlackJackTotal();
+            int dealerTotal = dealerHand.BlackJackTotal();
+            BjSplit bjSplit = BjSplit.No;
+            if (total >= 20)
             {
                 return BjAction.Stand;
             }
-            if (playerHand.isSoft)
+            if (playerHand.IsSoftTotal())
             {
-                BjSoftTotal softTotal = (BjSoftTotal)softMatrix[playerHand.Value - 12, dealerhand.Value];
+                BjSoftTotal softTotal = (BjSoftTotal)softMatrix[total - 12, dealerTotal - 1];
                 return ConvertToBjAction(softTotal, playerHand);
             }
-            if(playerHand)
+            if (playerHand.CanSplit())
+            {
+                bjSplit = (BjSplit)splitMatrix[playerHand.SplitNumber() - 1, dealerTotal - 1];
+                if(bjSplit == BjSplit.Split || (bjSplit == BjSplit.SplitIfDouble && BjRule.DoubleAfterSplit))
+                {
+                    return BjAction.Split;
+                }
+            }
+            BjHardTotal hardTotal = (BjHardTotal)hardMatrix[total, dealerTotal - 1];
+            return ConvertToBjAction(hardTotal, playerHand);
         }
 
-        private static BjAction ConvertToBjAction(BjSoftTotal total, BjHandResult handResult)
+        private static BjAction ConvertToBjAction(BjSoftTotal total, List<Card> handCards)
         {
             return total switch
             {
                 BjSoftTotal.Hit => BjAction.Hit,
                 BjSoftTotal.Stand => BjAction.Stand,
-                BjSoftTotal.DoubleOrStand => CanDouble(handResult) ? BjAction.Double : BjAction.Stand,
-                BjSoftTotal.DoubleOrHit => CanDouble(handResult) ? BjAction.Double : BjAction.Hit,
+                BjSoftTotal.DoubleOrStand => CanDouble(handCards) ? BjAction.Double : BjAction.Stand,
+                BjSoftTotal.DoubleOrHit => CanDouble(handCards) ? BjAction.Double : BjAction.Hit,
                 _ => throw new ArgumentOutOfRangeException(nameof(total))
             };
         }
-        private static ConvertToBjAction(BjSplit total)
-        {
 
-        }
-        private static ConvertToBjAction(BjHardTotal total)
+        private static BjAction ConvertToBjAction(BjHardTotal total, List<Card> handCards)
         {
-
+            return total switch
+            {
+                BjHardTotal.Hit => BjAction.Hit,
+                BjHardTotal.Stand => BjAction.Stand,
+                BjHardTotal.DoubleOrHit => CanDouble(handCards) ? BjAction.Double : BjAction.Hit,
+                _ => throw new ArgumentOutOfRangeException(nameof(total))
+            };
         }
 
         // Matrix Website : https://www.blackjackapprenticeship.com/wp-con.tent/uploads/2018/08/BJA_Basic_Strategy.jpg
@@ -82,6 +93,15 @@ namespace ObjectLibrary.Games.BlackJack.Service
         { 
           // ***************    DEALER CARD    *****************
           //  Ace  2    3    4    5    6    7    8    9    10  
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 0
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 1
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 2
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 3
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 4
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 5
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 6
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 7
+            { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 7
             { 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'},// 8
             { 'H', 'H', 'D', 'D', 'D', 'D', 'H', 'H', 'H', 'H'},// 9
             { 'H', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'H'},// 10
@@ -92,6 +112,8 @@ namespace ObjectLibrary.Games.BlackJack.Service
             { 'H', 'S', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H'},// 15
             { 'H', 'S', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H'},// 16
             { 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'},// 17
+            { 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'},// 18
+            { 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'},// 19
         };
     }
 }

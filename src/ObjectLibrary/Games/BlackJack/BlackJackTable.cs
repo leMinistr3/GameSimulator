@@ -1,5 +1,4 @@
 ﻿using ObjectLibrary.Enum;
-using ObjectLibrary.Games.BlackJack.Model;
 using ObjectLibrary.Items;
 
 namespace ObjectLibrary.Games.BlackJack
@@ -41,22 +40,11 @@ namespace ObjectLibrary.Games.BlackJack
                 // Resolve each player's hand
                 foreach (BjHand hand in _hands)
                 {
-                    if (!ResolveHand(hand))
-                        break;
+                    //if (!ResolveHand(hand))
+                      //  break;
                 }
             }
             ResetTable();
-        }
-
-        private bool ResolveHand(BjHand hand)
-        {
-            BjHandResult dealerHand = _dealer.Value();
-
-            BjHandResult playerHand = hand.Value();
-
-
-
-            return false;
         }
 
         private void ResetTable()
