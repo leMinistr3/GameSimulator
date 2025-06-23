@@ -50,9 +50,11 @@ namespace ObjectLibrary.Games.BlackJack
 
         private bool ResolveHand(BjHand hand)
         {
-            HandResult dealerHand = _dealer.Value();
+            BjHandResult dealerHand = _dealer.Value();
 
-            HandResult playerHand = hand.Value();
+            BjHandResult playerHand = hand.Value();
+
+
 
             return false;
         }

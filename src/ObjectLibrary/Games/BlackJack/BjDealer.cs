@@ -34,9 +34,9 @@ namespace ObjectLibrary.Games.BlackJack
             _cards.Clear();
         }
 
-        public HandResult Value()
+        public BjHandResult Value()
         {
-            HandResult result = new HandResult();
+            BjHandResult result = new BjHandResult();
             int total = _cards.Where(m => !m.isHidden).Sum(m => m.number);
             result.Value = total;
 

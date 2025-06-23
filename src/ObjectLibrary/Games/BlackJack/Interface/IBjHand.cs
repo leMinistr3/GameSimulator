@@ -12,6 +12,6 @@ namespace ObjectLibrary.Games.BlackJack.Interface
     {
         public bool AddCard(Card card);
         public void Clear();
-        public HandResult Value();
+        public BjHandResult Value();
     }
 }

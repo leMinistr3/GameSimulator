@@ -27,4 +27,12 @@ namespace ObjectLibrary.Enum
         Stand = 'S',
         DoubleOrHit = 'D'
     }
+
+    public enum BjAction
+    {
+        Hit,
+        Stand,
+        Double,
+        Split
+    }
 }

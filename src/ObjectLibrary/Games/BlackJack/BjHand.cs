@@ -5,11 +5,11 @@ using ObjectLibrary.Items;
 
 namespace ObjectLibrary.Games.BlackJack
 {
-    public class BjHand: IBjHand
+    public class BjHand : IBjHand
     {
         private List<Card> _cards { get; set; }
         private BjPlayer? _player { get; set; }
-        public bool isAdvantagePlayer { get { return _player !=  null; } } 
+        public bool isAdvantagePlayer { get { return _player != null; } }
         public bool isDisable { get; set; }
 
         public BjHand(int position, PlayerHandType type)
@@ -39,16 +39,23 @@ namespace ObjectLibrary.Games.BlackJack
             _cards.Clear();
         }
 
-        public HandResult Value()
+        // Remove HandResult and move this logic to BjResolve
+        public BjHandResult Value()
         {
-            HandResult result = new HandResult();
-            int total = _cards.Where(m => !m.isHidden).Sum(m => m.number);
+            BjHandResult result = new BjHandResult();
+            int total = _cards.Where(m => !m.isHidden).Sum(m => (m.number > 10) ? 10 : m.number);
             result.Value = total;
+            result.CardNumber = _cards.Count();
 
             if (_cards.Any(m => m.number == 1) && (result.Value + 10) <= 21)
             {
                 result.isSoft = true;
                 result.Value += 10;
+                result.isBlackJack = (_cards.Count == 2 && result.Value == 21);
+            }
+            if(_cards.Count() == 2)
+            {
+                result.isSplit = _cards[0].number == _cards[1].number;
             }
 
             return result;
