@@ -5,27 +5,59 @@ namespace ObjectLibrary.Games.BlackJack
 {
     public class BlackJackTable
     {
+        private const int _maxTableHands = 8;
         private double deckPenetration { get; set; }
         private Shoe _shoe { get; set; }
         private BjDealer _dealer { get; set; }
         private BjPlayer _player { get; set; }
-        private List<BjHand> _hands { get; set; }
-        private const int _maxTableHands = 8;
-
-        public BlackJackTable(Shoe shoe, double apBankRoll, List<PlayerHandType> handsPosition)
+        private List<BjPosition> _positionList => new List<BjPosition>
         {
-            if (handsPosition.Count + 1 > _maxTableHands)
+            TablePosition1,
+            TablePosition2,
+            TablePosition3,
+            TablePosition4,
+            TablePosition5,
+            TablePosition6,
+            TablePosition7,
+            TablePosition8
+        }.Where(p => p.isPlaying).ToList();
+
+        public BjPosition TablePosition1 { get; set; }
+        public BjPosition TablePosition2 { get; set; }
+        public BjPosition TablePosition3 { get; set; }
+        public BjPosition TablePosition4 { get; set; }
+        public BjPosition TablePosition5 { get; set; }
+        public BjPosition TablePosition6 { get; set; }
+        public BjPosition TablePosition7 { get; set; }
+        public BjPosition TablePosition8 { get; set; }
+
+        public BlackJackTable(Shoe shoe, BjPlayer player, List<PlayerHandType> handsPosition)
+        {
+            if (handsPosition.Count > _maxTableHands)
                 throw new IndexOutOfRangeException("Too many player hands for table positions.");
 
-            _player = new BjPlayer(apBankRoll);
+            if (handsPosition.Count(m => m == PlayerHandType.AdvantagePlayer) < 1)
+                throw new Exception("We need one Advantage player on the table");
+
+            _player = player;
             _shoe = shoe;
-            _hands = new List<BjHand>();
             _dealer = new BjDealer();
 
-            for (int i = 0; i < handsPosition.Count; i++)
+            TablePosition1 = new BjPosition(1);
+            TablePosition2 = new BjPosition(2);
+            TablePosition3 = new BjPosition(3);
+            TablePosition4 = new BjPosition(4);
+            TablePosition5 = new BjPosition(5);
+            TablePosition6 = new BjPosition(6);
+            TablePosition7 = new BjPosition(7);
+            TablePosition8 = new BjPosition(8);
+
+            for (int i = 1; i < handsPosition.Count; i++)
             {
-                var handType = handsPosition[i];
-                _hands.Add(handType == PlayerHandType.AdvantagePlayer ? new BjHand(_player, i + 1) : new BjHand(i + 1, handType));
+                if (handsPosition[i] != PlayerHandType.Empty)
+                {
+                    SetTablePosition(i, handsPosition[i] == PlayerHandType.AdvantagePlayer ? player : null);
+                }
             }
         }
 
@@ -41,7 +73,7 @@ namespace ObjectLibrary.Games.BlackJack
                 foreach (BjHand hand in _hands)
                 {
                     //if (!ResolveHand(hand))
-                      //  break;
+                    //  break;
                 }
             }
             ResetTable();
@@ -49,19 +81,43 @@ namespace ObjectLibrary.Games.BlackJack
 
         private void ResetTable()
         {
-            _hands.ForEach(m => m.Clear());
+            _positionList.ForEach(position => position.hands.ForEach(hand => hand.Clear()));
             _dealer.Clear();
             _shoe.ReShuffle();
         }
 
         private bool DealInitialCards()
         {
-            foreach (BjHand hand in _hands)
+            foreach (BjPosition position in _positionList)
             {
-                if (!hand.isDisable || !hand.AddCard(_shoe.DrawCard()))
+                if (position.hands.Any(hand => !hand.AddCard(_shoe.DrawCard())))
                     return false;
             }
             return _dealer.AddCard(_shoe.DrawCard());
+        }
+
+        private void SetTablePosition(int position, BjPlayer? player)
+        {
+            switch (position)
+            {
+                case 1:
+                    TablePosition1.EnablePosition(player); break;
+                case 2:
+                    TablePosition2.EnablePosition(player); break;
+                case 3:
+                    TablePosition3.EnablePosition(player); break;
+                case 4:
+                    TablePosition4.EnablePosition(player); break;
+                case 5:
+                    TablePosition5.EnablePosition(player); break;
+                case 6:
+                    TablePosition6.EnablePosition(player); break;
+                case 7:
+                    TablePosition7.EnablePosition(player); break;
+                case 8:
+                    TablePosition8.EnablePosition(player); break;
+
+            }
         }
     }
 }

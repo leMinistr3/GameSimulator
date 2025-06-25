@@ -20,7 +20,7 @@ namespace ObjectLibrary.Games.BlackJack.Service
             }
             if (playerHand.IsSoftTotal())
             {
-                BjSoftTotal softTotal = (BjSoftTotal)softMatrix[total - 12, dealerTotal - 1];
+                char softTotal = softMatrix[total - 12, dealerTotal - 1];
                 return ConvertToBjAction(softTotal, playerHand);
             }
             if (playerHand.CanSplit())
@@ -31,29 +31,19 @@ namespace ObjectLibrary.Games.BlackJack.Service
                     return BjAction.Split;
                 }
             }
-            BjHardTotal hardTotal = (BjHardTotal)hardMatrix[total, dealerTotal - 1];
+            char hardTotal = hardMatrix[total, dealerTotal - 1];
             return ConvertToBjAction(hardTotal, playerHand);
         }
 
-        private static BjAction ConvertToBjAction(BjSoftTotal total, List<Card> handCards)
+        private static BjAction ConvertToBjAction(char total, List<Card> handCards)
         {
+            // H = Hit, S = Stand, D = Double or Hit, T = Double or Stand
             return total switch
             {
-                BjSoftTotal.Hit => BjAction.Hit,
-                BjSoftTotal.Stand => BjAction.Stand,
-                BjSoftTotal.DoubleOrStand => CanDouble(handCards) ? BjAction.Double : BjAction.Stand,
-                BjSoftTotal.DoubleOrHit => CanDouble(handCards) ? BjAction.Double : BjAction.Hit,
-                _ => throw new ArgumentOutOfRangeException(nameof(total))
-            };
-        }
-
-        private static BjAction ConvertToBjAction(BjHardTotal total, List<Card> handCards)
-        {
-            return total switch
-            {
-                BjHardTotal.Hit => BjAction.Hit,
-                BjHardTotal.Stand => BjAction.Stand,
-                BjHardTotal.DoubleOrHit => CanDouble(handCards) ? BjAction.Double : BjAction.Hit,
+                'H' => BjAction.Hit,
+                'S' => BjAction.Stand,
+                'T' => CanDouble(handCards) ? BjAction.Double : BjAction.Stand,
+                'D' => CanDouble(handCards) ? BjAction.Double : BjAction.Hit,
                 _ => throw new ArgumentOutOfRangeException(nameof(total))
             };
         }
@@ -74,6 +64,7 @@ namespace ObjectLibrary.Games.BlackJack.Service
             { 'N', 'S', 'S', 'S', 'S', 'S', 'N', 'S', 'S', 'N'},// 9,9
             { 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'},// 10,10
         };
+        // N = No, S = Split, D = Split if Double
 
         private static char[,] softMatrix =
         { 
@@ -88,6 +79,7 @@ namespace ObjectLibrary.Games.BlackJack.Service
             { 'S', 'S', 'S', 'S', 'S', 'T', 'S', 'S', 'S', 'S'},// A8
             { 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'},// A9
         };
+        // H = Hit, S = Stand, D = Double or Hit, T = Double or Stand
 
         private static char[,] hardMatrix =
         { 
@@ -115,5 +107,6 @@ namespace ObjectLibrary.Games.BlackJack.Service
             { 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'},// 18
             { 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'},// 19
         };
+        // H = Hit, S = Stand, D = Double or Hit
     }
 }

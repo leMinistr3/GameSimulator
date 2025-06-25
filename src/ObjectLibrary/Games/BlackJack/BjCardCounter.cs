@@ -11,9 +11,13 @@ namespace ObjectLibrary.Games.BlackJack
 {
     public class BjCardCounter : ICardCounter
     {
-        public int Count { get; set; }
-        public void AjustCount(Card card)
+        public int TrueCount => Count / RemainingDeckAmount;
+
+        private int Count { get; set; }
+        private int RemainingDeckAmount { get; set; }
+        public void AjustCount(Card card, int deckNumber)
         {
+            RemainingDeckAmount = deckNumber;
             // Card 2, 3, 4, 5, 6 = Count - 1
             // Card 7, 8, 9 = Count + 0
             // Card 1, 10, 11, 12, 13 = Count + 1

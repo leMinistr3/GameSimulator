@@ -13,21 +13,6 @@ namespace ObjectLibrary.Enum
         SplitIfDouble = 'D'
     }
 
-    public enum BjSoftTotal
-    {
-        Hit = 'H',
-        Stand = 'S',
-        DoubleOrHit = 'D',
-        DoubleOrStand = 'T'
-    }
-
-    public enum BjHardTotal
-    {
-        Hit = 'H',
-        Stand = 'S',
-        DoubleOrHit = 'D'
-    }
-
     public enum BjAction
     {
         Hit,

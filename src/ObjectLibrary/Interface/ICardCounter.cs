@@ -4,7 +4,7 @@ namespace ObjectLibrary.Interface
 {
     public interface ICardCounter
     {
-        public int Count { get; set; }
-        public void AjustCount(Card card);
+        public int TrueCount { get; }
+        public void AjustCount(Card card, int deckNumber);
     }
 }

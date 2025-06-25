@@ -7,19 +7,9 @@ namespace ObjectLibrary.Games.BlackJack
     public class BjHand : IBjHand
     {
         private List<Card> _cards { get; set; }
-        private BjPlayer? _player { get; set; }
-        public bool isAdvantagePlayer { get { return _player != null; } }
-        public bool isDisable { get; set; }
 
-        public BjHand(int position, PlayerHandType type)
+        public BjHand()
         {
-            isDisable = type == PlayerHandType.Empty;
-            _cards = new List<Card>();
-        }
-
-        public BjHand(BjPlayer player, int position)
-        {
-            _player = player;
             _cards = new List<Card>();
         }
 

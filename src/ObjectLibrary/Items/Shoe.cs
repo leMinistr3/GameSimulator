@@ -8,6 +8,8 @@ namespace ObjectLibrary.Items
 {
     public class Shoe
     {
+        public int remainingDecks => (cards.Count(m => !m.isDiscard) - shoeDividerPosition) / 52;
+
         public bool isShoeEmpty { get; set; }
         public bool isLasthand { get; set; }
         public int shoeDividerPosition { get; private set; }
